@@ -1,5 +1,8 @@
 {
   "name": "e-controle",
+  "engines": {
+    "node": "11.x"
+  },
   "scripts": {
     "build-all": "npm run build-questionnaire-list && npm run build-questionnaire-create && npm run build-questionnaire-detail ",
     "build-questionnaire-create": "parcel build static/src/questionnaire-create.js --out-dir ./static/dist/ --out-file questionnaire-create-bundle.js",
