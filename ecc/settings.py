@@ -233,3 +233,6 @@ LDAP_USER = env('LDAP_USER', default=None)
 LDAP_DOMAIN = env('LDAP_DOMAIN', default=None)
 LDAP_PASSWORD = env('LDAP_PASSWORD', default=None)
 LDAP_DC = env('LDAP_DC', default=None)
+
+
+AGENT_LOGIN_URL = env('AGENT_LOGIN_URL', default=None)
