@@ -1,5 +1,6 @@
 import os
 import environ
+import logging
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -17,6 +18,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.PersistentRemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -97,6 +104,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecc.wsgi.application'
 
+
+AUTHENTICATION_BACKENDS = [
+    'magicauth.auth_engine.TunedRemoteUserBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -221,3 +233,6 @@ LDAP_USER = env('LDAP_USER', default=None)
 LDAP_DOMAIN = env('LDAP_DOMAIN', default=None)
 LDAP_PASSWORD = env('LDAP_PASSWORD', default=None)
 LDAP_DC = env('LDAP_DC', default=None)
+
+
+AGENT_LOGIN_URL = env('AGENT_LOGIN_URL', default=None)

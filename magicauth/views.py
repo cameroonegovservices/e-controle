@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
-
+import logging
 from .forms import EmailForm
 from .models import MagicToken
 
@@ -46,11 +46,27 @@ class ValidateTokenView(generic.RedirectView):
                 "Ce lien de connexion ne fonctionne plus. Pour en recevoir un nouveau, nous vous invitons à renseigner votre email ci-dessous puis à cliquer sur valider."
             )
             return redirect('login')
-        login(self.request, token.user)
+        login(self.request, token.user, backend='django.contrib.auth.backends.ModelBackend')
         MagicToken.objects.filter(user=token.user).delete()  # Remove them all for this user
+        return super().get(*args, **kwargs)
+
+class ValidateAgentView(generic.RedirectView):
+    url = reverse_lazy('questionnaire-list')
+
+    def get(self, *args, **kwargs):
+        logging.debug(f'Logging {self.request.user}')
+        if self.request.user.is_authenticated:
+            return redirect(settings.LOGIN_REDIRECT_URL)
+        messages.warning(
+          self.request,
+          "Vous n'êtes actuellement pas connecter au réseau des JF. Pour vous connecter, nous vous invitons à renseigner votre email ci-dessous puis à cliquer sur valider."
+        )
+
         return super().get(*args, **kwargs)
 
 
 magic_link = MagicLinkView.as_view()
 email_sent = generic.TemplateView.as_view(template_name='magicauth/email_sent.html')
 validate_token = ValidateTokenView.as_view()
+
+kerberos_validation = ValidateAgentView.as_view()
